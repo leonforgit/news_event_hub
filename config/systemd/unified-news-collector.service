@@ -1,0 +1,17 @@
+[Unit]
+Description=Unified News Event Hub Live Collector
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/news-event-hub
+EnvironmentFile=-/opt/news-event-hub/config/news_event_hub.env
+TimeoutStartSec=20min
+ExecStart=/usr/bin/python3 /opt/news-event-hub/scripts/run_live_news_collector.py --db /opt/news-event-hub/state/news_event.db --registry /opt/news-event-hub/config/source_registry_v1.yaml --catalog /opt/news-event-hub/config/live_collector_catalog_v1.json
+StandardOutput=append:/opt/news-event-hub/logs/live_collector.log
+StandardError=append:/opt/news-event-hub/logs/live_collector.log
+
+[Install]
+WantedBy=multi-user.target

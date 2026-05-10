@@ -1,0 +1,30 @@
+{
+  "sources": [
+    {
+      "key": "xueqiu_tracked_search",
+      "name": "Xueqiu Tracked Search (Browser)",
+      "type": "xueqiu_dom_search",
+      "min_interval_minutes": 180,
+      "max_age_hours": 96,
+      "intent": "company",
+      "market_scope_cn": "雪球原生讨论线索（浏览器搜索）",
+      "region": "CN",
+      "region_cn": "中国",
+      "publisher": "雪球",
+      "max_targets": 8,
+      "max_items_per_target": 4,
+      "keywords_cn": [
+        "传闻",
+        "收购",
+        "并购",
+        "重组",
+        "订单",
+        "扩产",
+        "停产",
+        "提价",
+        "增持",
+        "回购"
+      ]
+    }
+  ]
+}

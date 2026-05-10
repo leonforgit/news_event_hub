@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Unified News Event Hub collector every 10 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Persistent=true
+RandomizedDelaySec=45
+Unit=unified-news-collector.service
+
+[Install]
+WantedBy=timers.target

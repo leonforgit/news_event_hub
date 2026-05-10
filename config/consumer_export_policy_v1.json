@@ -1,0 +1,10 @@
+{
+  "version": "consumer_export_policy_v1",
+  "default_research_limit": 0,
+  "persistent_event_lookback_hours": 336,
+  "persistent_event_state": "mature",
+  "persistent_event_min_event_rank_score": 60,
+  "persistent_event_min_article_count": 3,
+  "persistent_event_min_independent_evidence_count": 2,
+  "persistent_event_min_signal_platform_count": 1
+}

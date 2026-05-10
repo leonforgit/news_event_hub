@@ -1,0 +1,17 @@
+[Unit]
+Description=Unified News Event Layer Builder
+Wants=network-online.target
+After=network-online.target
+OnSuccess=unified-news-consumer-views.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/news-event-hub
+TimeoutStartSec=30min
+ExecStart=/usr/bin/python3 /opt/news-event-hub/scripts/build_event_layer.py --db /opt/news-event-hub/state/news_event.db --lookback-days 1 --exclude-source-id akshare_stock_notice_report --max-article-count 50000 --slice-safe
+StandardOutput=append:/opt/news-event-hub/logs/event_layer.log
+StandardError=append:/opt/news-event-hub/logs/event_layer.log
+
+[Install]
+WantedBy=multi-user.target

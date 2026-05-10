@@ -1,0 +1,130 @@
+{
+  "version": "industry_taxonomy_v1",
+  "industries": [
+    {
+      "id": "banking",
+      "label": "银行",
+      "terms": ["银行", "bank", "banks", "lender", "lending"]
+    },
+    {
+      "id": "brokerage_capital_markets",
+      "label": "券商资本市场",
+      "terms": ["券商", "证券", "投行", "brokerage", "broker", "capital markets", "investment bank"]
+    },
+    {
+      "id": "insurance",
+      "label": "保险",
+      "terms": ["保险", "insurance", "insurer", "reinsurance"]
+    },
+    {
+      "id": "semiconductor",
+      "label": "半导体",
+      "terms": ["半导体", "chip", "chips", "semiconductor", "晶圆", "晶圆厂", "封装", "先进制程"]
+    },
+    {
+      "id": "consumer_electronics",
+      "label": "消费电子",
+      "terms": ["消费电子", "smartphone", "iphone", "handset", "pc", "notebook", "wearable", "tablet"]
+    },
+    {
+      "id": "ai_compute_software",
+      "label": "算力AI软件",
+      "terms": ["ai", "人工智能", "大模型", "模型", "算力", "gpu", "inference", "training", "cloud software", "saas", "software"]
+    },
+    {
+      "id": "communications_networks",
+      "label": "通信网络",
+      "terms": ["通信", "5g", "6g", "network equipment", "telecom", "光模块", "optical", "fiber"]
+    },
+    {
+      "id": "ev_auto",
+      "label": "新能源车",
+      "terms": ["新能源", "电动车", "新能源汽车", "ev", "battery electric", "智能驾驶", "autonomous driving"]
+    },
+    {
+      "id": "battery_storage",
+      "label": "锂电储能",
+      "terms": ["锂电", "储能", "电池", "battery", "energy storage", "bms", "固态电池"]
+    },
+    {
+      "id": "solar_wind_powergrid",
+      "label": "光伏风电电网",
+      "terms": ["光伏", "solar", "wind", "风电", "电网", "grid", "输电", "变压器", "逆变器"]
+    },
+    {
+      "id": "industrials_machinery",
+      "label": "机械设备",
+      "terms": ["机械", "设备", "工业机器人", "automation", "industrial equipment", "machine tool", "工程机械"]
+    },
+    {
+      "id": "transport_logistics",
+      "label": "交通物流",
+      "terms": ["物流", "快递", "仓储", "rail", "铁路", "freight", "cargo", "trucking"]
+    },
+    {
+      "id": "shipping_ports",
+      "label": "航运港口",
+      "terms": ["航运", "shipping", "oil tanker", "港口", "海运", "container shipping", "dry bulk"]
+    },
+    {
+      "id": "oil_gas",
+      "label": "石油天然气",
+      "terms": ["原油", "石油", "天然气", "oil", "gas", "lng", "产油", "opec", "opec+", "refiner", "pipeline"]
+    },
+    {
+      "id": "coal_power_utilities",
+      "label": "煤炭电力公用事业",
+      "terms": ["煤炭", "火电", "电力", "公用事业", "utility", "utilities", "thermal coal", "power plant"]
+    },
+    {
+      "id": "metals_mining",
+      "label": "黄金有色",
+      "terms": ["黄金", "gold", "铜", "铝", "锂矿", "矿", "mining", "nickel", "rare earth", "稀土"]
+    },
+    {
+      "id": "chemicals_materials",
+      "label": "化工新材料",
+      "terms": ["化工", "新材料", "materials", "chemical", "chemicals", "composite", "advanced materials"]
+    },
+    {
+      "id": "pharma_biotech_medtech",
+      "label": "医药生物医疗器械",
+      "terms": ["制药", "药业", "biopharma", "pharma", "drugmaker", "医疗", "创新药", "biotech", "medtech", "医疗器械"]
+    },
+    {
+      "id": "consumer_food_beverage",
+      "label": "消费食品",
+      "terms": ["食品", "饮料", "快消", "food", "beverage", "restaurant", "餐饮", "乳业", "白酒"]
+    },
+    {
+      "id": "retail_ecommerce",
+      "label": "零售电商",
+      "terms": ["零售", "电商", "e-commerce", "ecommerce", "online retail", "商超", "platform retail"]
+    },
+    {
+      "id": "home_appliances_furnishing",
+      "label": "家电家居",
+      "terms": ["家电", "家居", "appliance", "appliances", "furniture", "home furnishing"]
+    },
+    {
+      "id": "real_estate_construction",
+      "label": "地产建筑",
+      "terms": ["地产", "房地产", "property developer", "real estate", "construction", "建筑", "建材", "infrastructure"]
+    },
+    {
+      "id": "defense_aerospace",
+      "label": "军工航天",
+      "terms": ["军工", "国防", "defense", "missile", "space", "航天", "卫星", "satellite", "launch vehicle"]
+    },
+    {
+      "id": "agriculture",
+      "label": "农业农产品",
+      "terms": ["农业", "农产品", "种业", "fertilizer", "crop", "grain", "corn", "soybean", "hog"]
+    },
+    {
+      "id": "travel_hospitality",
+      "label": "旅游酒店",
+      "terms": ["旅游", "酒店", "airline", "airlines", "aviation", "travel", "hospitality", "casino"]
+    }
+  ]
+}

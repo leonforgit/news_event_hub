@@ -1,0 +1,12 @@
+[Unit]
+Description=Export Unified News Consumer Views
+After=network-online.target unified-news-event-layer.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/news-event-hub
+TimeoutStartSec=15min
+ExecStart=/usr/bin/python3 /opt/news-event-hub/scripts/export_consumer_views.py --db /opt/news-event-hub/state/news_event.db --output-root /opt/news-event-hub/state/consumer_exports --no-dated-copy
+StandardOutput=append:/opt/news-event-hub/logs/consumer_views.log
+StandardError=append:/opt/news-event-hub/logs/consumer_views.log

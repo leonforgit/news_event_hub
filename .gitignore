@@ -1,0 +1,58 @@
+# codex-workspace-bootstrap:start
+.DS_Store
+.report-python-path
+__pycache__/
+*.pyc
+.pytest_cache/
+.playwright-cli/
+.agent-browser/
+docs/rendered/
+# codex-workspace-bootstrap:end
+
+# runtime state
+.venv/
+runtime/
+state/
+logs/
+cache/
+output/
+outputs/company_discovery/
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+config/news_event_hub.env
+*.env
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+.npmrc
+.pypirc
+.netrc
+.aws/
+.ssh/
+ssh_config
+known_hosts
+credentials.json
+secrets.json
+secret.json
+*service-account*.json
+*service_account*.json
+client_secret*.json
+*storage_state*.json
+cookies.json
+cookies.txt
+
+# private deployment overrides
+config/private/
+config/*.local.json
+config/*private*.json
+config/*deployment*.local.*
+
+# transient local artifacts
+event

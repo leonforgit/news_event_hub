@@ -1,0 +1,17 @@
+[Unit]
+Description=Unified News Event Hub FRED Macro Import
+Wants=network-online.target
+After=network-online.target
+OnSuccess=unified-news-event-layer.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/news-event-hub
+TimeoutStartSec=20min
+ExecStart=/usr/bin/python3 /opt/news-event-hub/scripts/import_fred_us_macro_open_data.py --db /opt/news-event-hub/state/news_event.db --schema /opt/news-event-hub/config/schema.sql --registry /opt/news-event-hub/config/source_registry_v1.yaml --cache-dir /opt/news-event-hub/cache/fred_us_macro_open_data
+StandardOutput=append:/opt/news-event-hub/logs/fred_macro_import.log
+StandardError=append:/opt/news-event-hub/logs/fred_macro_import.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NEWS_RUNTIME_HOST="${NEWS_RUNTIME_HOST:-}"
+if [[ -z "${NEWS_RUNTIME_HOST}" ]]; then
+  echo "NEWS_RUNTIME_HOST must be set to your SSH host alias or hostname." >&2
+  exit 2
+fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+REMOTE_ROOT="${REMOTE_ROOT:-/opt/news-event-hub}"
+REMOTE_CONFIG_DIR="${REMOTE_ROOT}/config"
+REMOTE_SYSTEMD_DIR="${REMOTE_CONFIG_DIR}/systemd"
+REMOTE_SCRIPT_DIR="${REMOTE_ROOT}/scripts"
+REMOTE_STATE_DIR="${REMOTE_ROOT}/state"
+REMOTE_LOG_DIR="${REMOTE_ROOT}/logs"
+REMOTE_DB_PATH="${REMOTE_STATE_DIR}/news_event.db"
+REMOTE_SCHEMA_PATH="${REMOTE_CONFIG_DIR}/schema.sql"
+REMOTE_ENV_PATH="${REMOTE_CONFIG_DIR}/news_event_hub.env"
+LOCAL_CODEX_ENV="${HOME}/.config/codex/env.zsh"
+
+REQUIRED_FILES=(
+  "${ROOT_DIR}/config/source_registry_v1.yaml"
+  "${ROOT_DIR}/config/live_collector_catalog_v1.json"
+  "${ROOT_DIR}/config/schema.sql"
+  "${ROOT_DIR}/scripts/init_unified_news_db.py"
+  "${ROOT_DIR}/scripts/run_live_news_collector.py"
+  "${ROOT_DIR}/config/systemd/unified-news-collector.service"
+  "${ROOT_DIR}/config/systemd/unified-news-collector.timer"
+)
+
+echo "[deploy-live] host=${NEWS_RUNTIME_HOST}"
+echo "[deploy-live] remote_root=${REMOTE_ROOT}"
+
+"${ROOT_DIR}/scripts/deploy_runtime_repo_checkout.sh"
+
+for path in "${REQUIRED_FILES[@]}"; do
+  if [[ ! -f "${path}" ]]; then
+    echo "[deploy-live] missing local file: ${path}" >&2
+    exit 1
+  fi
+done
+
+ssh "${NEWS_RUNTIME_HOST}" "python3 - <<'PY'
+import importlib
+for module in ('sqlite3', 'requests', 'yaml', 'akshare', 'bs4'):
+    importlib.import_module(module)
+PY
+test -w /etc/systemd/system"
+
+ssh "${NEWS_RUNTIME_HOST}" "mkdir -p '${REMOTE_CONFIG_DIR}' '${REMOTE_SYSTEMD_DIR}' '${REMOTE_SCRIPT_DIR}' '${REMOTE_STATE_DIR}' '${REMOTE_LOG_DIR}'"
+
+TMP_ENV_FILE="$(mktemp)"
+cleanup() {
+  rm -f "${TMP_ENV_FILE}"
+}
+trap cleanup EXIT
+
+if [[ -f "${LOCAL_CODEX_ENV}" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "${LOCAL_CODEX_ENV}"
+  set +a
+fi
+
+{
+  if [[ -n "${MARKETAUX_API_KEY:-}" ]]; then
+    printf "MARKETAUX_API_KEY=%q\n" "${MARKETAUX_API_KEY}"
+  fi
+  if [[ -n "${MEDIASTACK_API_KEY:-}" ]]; then
+    printf "MEDIASTACK_API_KEY=%q\n" "${MEDIASTACK_API_KEY}"
+  fi
+  if [[ -n "${SERPSTACK_API_KEY:-}" ]]; then
+    printf "SERPSTACK_API_KEY=%q\n" "${SERPSTACK_API_KEY}"
+  fi
+} > "${TMP_ENV_FILE}"
+
+scp "${ROOT_DIR}/config/source_registry_v1.yaml" "${NEWS_RUNTIME_HOST}:${REMOTE_CONFIG_DIR}/source_registry_v1.yaml"
+scp "${ROOT_DIR}/config/live_collector_catalog_v1.json" "${NEWS_RUNTIME_HOST}:${REMOTE_CONFIG_DIR}/live_collector_catalog_v1.json"
+scp "${ROOT_DIR}/config/schema.sql" "${NEWS_RUNTIME_HOST}:${REMOTE_CONFIG_DIR}/schema.sql"
+scp "${ROOT_DIR}/scripts/init_unified_news_db.py" "${NEWS_RUNTIME_HOST}:${REMOTE_SCRIPT_DIR}/init_unified_news_db.py"
+scp "${ROOT_DIR}/scripts/run_live_news_collector.py" "${NEWS_RUNTIME_HOST}:${REMOTE_SCRIPT_DIR}/run_live_news_collector.py"
+scp "${ROOT_DIR}/config/systemd/unified-news-collector.service" "${NEWS_RUNTIME_HOST}:${REMOTE_SYSTEMD_DIR}/unified-news-collector.service"
+scp "${ROOT_DIR}/config/systemd/unified-news-collector.timer" "${NEWS_RUNTIME_HOST}:${REMOTE_SYSTEMD_DIR}/unified-news-collector.timer"
+scp "${TMP_ENV_FILE}" "${NEWS_RUNTIME_HOST}:${REMOTE_ENV_PATH}"
+
+ssh "${NEWS_RUNTIME_HOST}" "chmod 600 '${REMOTE_ENV_PATH}'"
+
+ssh "${NEWS_RUNTIME_HOST}" "python3 '${REMOTE_SCRIPT_DIR}/init_unified_news_db.py' --db '${REMOTE_DB_PATH}' --schema '${REMOTE_SCHEMA_PATH}' --registry '${REMOTE_CONFIG_DIR}/source_registry_v1.yaml'"
+
+ssh "${NEWS_RUNTIME_HOST}" "chmod +x '${REMOTE_SCRIPT_DIR}/init_unified_news_db.py' '${REMOTE_SCRIPT_DIR}/run_live_news_collector.py' && systemd-analyze verify '${REMOTE_SYSTEMD_DIR}/unified-news-collector.service' '${REMOTE_SYSTEMD_DIR}/unified-news-collector.timer' && cp '${REMOTE_SYSTEMD_DIR}/unified-news-collector.service' /etc/systemd/system/unified-news-collector.service && cp '${REMOTE_SYSTEMD_DIR}/unified-news-collector.timer' /etc/systemd/system/unified-news-collector.timer && systemctl daemon-reload && systemctl enable --now unified-news-collector.timer"
+
+echo "[deploy-live] triggering first collector run"
+if ! ssh "${NEWS_RUNTIME_HOST}" "systemctl start unified-news-collector.service"; then
+  echo "[deploy-live] first collector start failed; retrying once after a short backoff"
+  sleep 3
+  ssh "${NEWS_RUNTIME_HOST}" "journalctl -u unified-news-collector.service -n 40 --no-pager || true"
+  ssh "${NEWS_RUNTIME_HOST}" "systemctl reset-failed unified-news-collector.service || true"
+  ssh "${NEWS_RUNTIME_HOST}" "systemctl start unified-news-collector.service"
+fi
+
+echo "[deploy-live] timer status"
+ssh "${NEWS_RUNTIME_HOST}" "systemctl status unified-news-collector.timer --no-pager | sed -n '1,12p'"
+
+echo "[deploy-live] service status"
+ssh "${NEWS_RUNTIME_HOST}" "systemctl status unified-news-collector.service --no-pager | sed -n '1,18p'"
+
+echo "[deploy-live] sqlite summary"
+ssh "${NEWS_RUNTIME_HOST}" "python3 - <<'PY'
+import sqlite3
+db_path = '${REMOTE_DB_PATH}'
+conn = sqlite3.connect(db_path)
+try:
+    print(f'db_path: {db_path}')
+    print('news_articles_total:', conn.execute('SELECT COUNT(*) FROM news_articles').fetchone()[0])
+    print('source_health_total:', conn.execute('SELECT COUNT(*) FROM source_health').fetchone()[0])
+    print('daily_digest_rows:', conn.execute('SELECT COUNT(*) FROM v_daily_digest').fetchone()[0])
+    print('radar_industry_rows:', conn.execute('SELECT COUNT(*) FROM v_radar_industry').fetchone()[0])
+    for row in conn.execute(\"\"\"
+        SELECT source_id, status, checked_at, articles_last_24h, last_article_at
+        FROM source_health
+        ORDER BY checked_at DESC, id DESC
+        LIMIT 10
+    \"\"\"):
+        print(row)
+finally:
+    conn.close()
+PY"
+
+echo "[deploy-live] recent log tail"
+ssh "${NEWS_RUNTIME_HOST}" "tail -n 40 '${REMOTE_LOG_DIR}/live_collector.log' || true"

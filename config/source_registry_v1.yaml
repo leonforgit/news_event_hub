@@ -1,0 +1,1035 @@
+# =============================================================================
+# Source Registry v1
+# Unified News System Phase 1
+#
+# 当前口径：
+# - 只保留 News
+# - 只保留两条 lane：
+#   - confirmation
+#   - signal
+# - 当前字段与 config/schema.sql 对齐
+# =============================================================================
+
+sources:
+
+  # ---------------------------------------------------------------------------
+  # CONFIRMATION LANE — 第一批主干
+  # ---------------------------------------------------------------------------
+
+  - source_id: sec_8k_current
+    name: "SEC Current 8-K Filings"
+    lane: confirmation
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: sec_8k_current
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "美国公司公告硬信息主干。"
+
+  - source_id: sec_6k_current
+    name: "SEC Current 6-K Filings"
+    lane: confirmation
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: sec_6k_current
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "ADR / 海外发行人公告主干。"
+
+  - source_id: cninfo_sz_latest
+    name: "CNINFO Shenzhen Latest Announcements"
+    lane: confirmation
+    source_family: "exchange:cninfo"
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: cninfo_sz_latest
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "A 股公告主干。"
+
+  - source_id: cninfo_sh_latest
+    name: "CNINFO Shanghai Latest Announcements"
+    lane: confirmation
+    source_family: "exchange:cninfo"
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: cninfo_sh_latest
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "A 股公告主干。"
+
+  - source_id: hkex_tracked_latest
+    name: "HKEX Tracked Company Announcements"
+    lane: confirmation
+    source_family: "exchange:hkex"
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: hkex_tracked_latest
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "港股公告主干。"
+
+  - source_id: fed_press
+    name: "Federal Reserve Press Releases"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 1
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: fed_press
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "宏观确认源。"
+
+  - source_id: fred_us_macro_open_data
+    name: "FRED US Macro Open Data"
+    lane: confirmation
+    source_family: "macro:fred"
+    source_type: api
+    trust_tier: 1
+    coverage_scope: macro
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: superpilot69/fred-us-macro-open-data
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "FRED source-of-record 美国高影响宏观发布事件，附带部分 Investing.com consensus / surprise 字段；由专用 importer 写入结构化 article 层。"
+
+  - source_id: govcn_yaowen
+    name: "State Council Important News"
+    lane: confirmation
+    source_type: api
+    trust_tier: 1
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: govcn_yaowen
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "中国政策确认源。"
+
+  - source_id: xinhua_fortune_html
+    name: "Xinhua Fortune Channel"
+    lane: confirmation
+    source_type: scrape
+    trust_tier: 1
+    coverage_scope: mixed
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: xinhua_fortune_html
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "中国政策与产业新闻补充。"
+
+  - source_id: cls_telegraph_html
+    name: "CLS Telegraph Feed"
+    lane: confirmation
+    source_family: "wire:cls"
+    source_type: scrape
+    trust_tier: 1
+    coverage_scope: mixed
+    collector_owner: daily_report
+    scheduler_class: high_freq
+    origin_system: investment_report
+    legacy_key: cls_telegraph_html
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "高频快讯主干。"
+
+  - source_id: reuters_macro_bing
+    name: "Reuters Macro and Markets Feed"
+    lane: confirmation
+    source_family: "wire:reuters"
+    source_type: rss
+    trust_tier: 1
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: high_freq
+    origin_system: investment_report
+    legacy_key: reuters_macro_bing
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "海外宏观确认源，当前为搜索聚合接入。"
+
+  - source_id: reuters_company_bing
+    name: "Reuters Company and Deals Feed"
+    lane: confirmation
+    source_family: "wire:reuters"
+    source_type: rss
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: high_freq
+    origin_system: investment_report
+    legacy_key: reuters_company_bing
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "海外公司事件确认源，当前为搜索聚合接入。"
+
+  - source_id: company_mna_bing
+    name: "Bing M&A Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_mna_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司并购主题搜索补充源。"
+
+  - source_id: company_spin_bing
+    name: "Bing Spin-off Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_spin_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司分拆主题搜索补充源。"
+
+  - source_id: company_asset_sale_bing
+    name: "Bing Asset Sale Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_asset_sale_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司资产出售主题搜索补充源。"
+
+  - source_id: company_capacity_bing
+    name: "Bing Capacity Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_capacity_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司产能扩张主题搜索补充源。"
+
+  - source_id: company_financing_bing
+    name: "Bing Financing Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_financing_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司融资与债务安排主题搜索补充源。"
+
+  - source_id: company_resources_bing
+    name: "Bing Resource Expansion Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_resources_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司资源储量扩张主题搜索补充源。"
+
+  - source_id: company_new_industry_bing
+    name: "Bing New Industry Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_new_industry_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "公司进入新行业主题搜索补充源。"
+
+  - source_id: company_stcn_html
+    name: "STCN Company News Feed"
+    lane: confirmation
+    source_family: "media:stcn"
+    source_type: scrape
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_stcn_html
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "中国公司新闻补充。"
+
+  - source_id: company_jiemian_stock_html
+    name: "Jiemian Stock Front Feed"
+    lane: confirmation
+    source_family: "media:jiemian"
+    source_type: scrape
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_jiemian_stock_html
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "中国公司新闻补充。"
+
+  - source_id: company_jiemian_company_html
+    name: "Jiemian Company Headlines Feed"
+    lane: confirmation
+    source_family: "media:jiemian"
+    source_type: scrape
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_jiemian_company_html
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "中国公司新闻补充。"
+
+  - source_id: akshare_stock_info_global_cls
+    name: "财联社全球快讯 (AKShare)"
+    lane: confirmation
+    source_family: "wire:cls"
+    source_type: api
+    trust_tier: 1
+    coverage_scope: mixed
+    collector_owner: radar
+    scheduler_class: high_freq
+    origin_system: industry_signal_radar
+    legacy_key: akshare:stock_info_global_cls
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "行业雷达现有活跃快讯主干。"
+
+  - source_id: akshare_news_cctv
+    name: "央视新闻联播摘要 (AKShare)"
+    lane: confirmation
+    source_type: api
+    trust_tier: 1
+    coverage_scope: macro
+    collector_owner: radar
+    scheduler_class: daily
+    origin_system: industry_signal_radar
+    legacy_key: akshare:news_cctv
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "行业雷达现有宏观新闻补充。"
+
+  - source_id: akshare_stock_info_global_em
+    name: "东方财富全球快讯 (AKShare)"
+    lane: confirmation
+    source_family: "media:eastmoney"
+    source_type: api
+    trust_tier: 2
+    coverage_scope: mixed
+    collector_owner: radar
+    scheduler_class: high_freq
+    origin_system: industry_signal_radar
+    legacy_key: akshare:stock_info_global_em
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "行业雷达现有活跃快讯补充。"
+
+  - source_id: akshare_stock_info_global_ths
+    name: "同花顺全球快讯 (AKShare)"
+    lane: confirmation
+    source_family: "media:10jqka"
+    source_type: api
+    trust_tier: 2
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: akshare:stock_info_global_ths
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "AKShare 封装的同花顺实时快讯补充源。"
+
+  - source_id: akshare_stock_notice_report
+    name: "东方财富公告快报 (AKShare)"
+    lane: confirmation
+    source_family: "disclosure:eastmoney_notice"
+    source_type: api
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: radar
+    scheduler_class: daily
+    origin_system: industry_signal_radar
+    legacy_key: akshare:stock_notice_report
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "行业雷达现有活跃公告源。"
+
+  - source_id: cailian_api
+    name: "财联社"
+    lane: confirmation
+    source_type: api
+    trust_tier: 1
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: cailian_api
+    phase1_disposition: migrate_phase1
+    enabled: false
+    description: "目标态高频高信任源，当前未直连接入。"
+
+  - source_id: jinshi_api
+    name: "金十数据"
+    lane: confirmation
+    source_family: "wire:jinshi"
+    source_type: api
+    trust_tier: 1
+    coverage_scope: macro
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: jinshi_api
+    phase1_disposition: defer
+    enabled: false
+    description: "方向明确，但不作为当前第一批实际写入源。"
+
+  - source_id: jinshi_telegram_channel
+    name: "金十数据 Telegram Channel"
+    lane: confirmation
+    source_family: "wire:jinshi"
+    source_type: social
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: jinshi_telegram_channel
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "operator-managed  Telegram relay 快讯源，作为金十兼容接入。"
+
+  - source_id: exchange_sse
+    name: "上交所公告"
+    lane: confirmation
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: exchange_sse
+    phase1_disposition: migrate_phase1
+    enabled: false
+    description: "目标态正确，当前待接入。"
+
+  - source_id: exchange_szse
+    name: "深交所公告"
+    lane: confirmation
+    source_type: exchange
+    trust_tier: 1
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: exchange_szse
+    phase1_disposition: migrate_phase1
+    enabled: false
+    description: "目标态正确，当前待接入。"
+
+  - source_id: marketaux_global_optional
+    name: "MarketAux Optional Market Feed"
+    lane: confirmation
+    source_family: "api:marketaux"
+    source_type: api
+    trust_tier: 2
+    coverage_scope: global
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: marketaux_global_optional
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "迁移期补充源，不作为长期主干。"
+
+  - source_id: mediastack_global_optional
+    name: "Mediastack Optional News Feed"
+    lane: confirmation
+    source_family: "api:mediastack"
+    source_type: api
+    trust_tier: 2
+    coverage_scope: global
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: mediastack_global_optional
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "APILayer 生态下的全球新闻补充 recall API，作为 env-gated optional source 接入。"
+
+  - source_id: prnewswire_all_releases
+    name: "PR Newswire All News Releases"
+    lane: confirmation
+    source_family: "wire:prnewswire"
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: prnewswire_all_releases
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "官方直连 PR Newswire 总发布 feed，用于补全球公司 release recall。"
+
+  - source_id: prnewswire_financial_services
+    name: "PR Newswire Financial Services"
+    lane: confirmation
+    source_family: "wire:prnewswire"
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: prnewswire_financial_services
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "官方直连 PR Newswire 金融服务与投资 feed。"
+
+  - source_id: prnewswire_general_business
+    name: "PR Newswire General Business"
+    lane: confirmation
+    source_family: "wire:prnewswire"
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: prnewswire_general_business
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "官方直连 PR Newswire 综合商业 feed。"
+
+  - source_id: prnewswire_policy_public_interest
+    name: "PR Newswire Policy and Public Interest"
+    lane: confirmation
+    source_family: "wire:prnewswire"
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: prnewswire_policy_public_interest
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "官方直连 PR Newswire 政策与公共事务 feed。"
+
+  - source_id: globenewswire_press_releases
+    name: "GlobeNewswire Press Releases"
+    lane: confirmation
+    source_family: "wire:globenewswire"
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: globenewswire_press_releases
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "官方直连 GlobeNewswire 新闻发布 feed。"
+
+  - source_id: globenewswire_mna
+    name: "GlobeNewswire Mergers and Acquisitions"
+    lane: confirmation
+    source_family: "wire:globenewswire"
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: high_freq
+    origin_system: news_event_hub
+    legacy_key: globenewswire_mna
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "官方直连 GlobeNewswire 并购主题 feed。"
+
+  - source_id: macro_oil_bing
+    name: "Bing Macro Oil Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: macro_oil_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "商品相关宏观新闻补充。"
+
+  - source_id: macro_rates_bing
+    name: "Bing Rates and FX Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: macro_rates_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "利率与汇率新闻补充。"
+
+  - source_id: macro_china_bing
+    name: "Bing China Policy Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: macro_china_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "中国政策新闻补充。"
+
+  - source_id: macro_us_china_bing
+    name: "Bing US-China Policy Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: macro_us_china_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "中美政策新闻补充。"
+
+  - source_id: macro_middleeast_bing
+    name: "Bing Middle East Macro Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: macro_middleeast_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "地缘与能源新闻补充。"
+
+  - source_id: macro_defense_policy_bing
+    name: "Bing Defense Policy Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: macro
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: macro_defense_policy_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "军售与地缘政策新闻补充。"
+
+  - source_id: company_bloomberg_bing
+    name: "Bloomberg Company News Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_bloomberg_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "当前只是搜索聚合，不是直连 Bloomberg。"
+
+  - source_id: company_wsj_bing
+    name: "WSJ Company News Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_wsj_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "当前只是搜索聚合。"
+
+  - source_id: company_cnbc_bing
+    name: "CNBC Company News Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_cnbc_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "当前只是搜索聚合。"
+
+  - source_id: company_ap_bing
+    name: "AP Company News Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_ap_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "当前只是搜索聚合。"
+
+  - source_id: company_ft_bing
+    name: "FT Company News Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_ft_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "当前只是搜索聚合。"
+
+  - source_id: company_marketwatch_bing
+    name: "MarketWatch Company News Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_marketwatch_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "当前只是搜索聚合。"
+
+  - source_id: company_financial_media_bing
+    name: "Primary Financial Media Company Feed"
+    lane: confirmation
+    source_type: rss
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_financial_media_bing
+    phase1_disposition: compat_keep
+    enabled: true
+    description: "泛财经媒体兜底源。"
+
+  # ---------------------------------------------------------------------------
+  # SIGNAL LANE — 第一批与后续储备
+  # ---------------------------------------------------------------------------
+
+  - source_id: weibo_tracked_mobile
+    name: "Weibo Mobile Tracked Search"
+    lane: signal
+    source_family: "social:weibo"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: mixed
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: weibo_tracked_mobile
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "当前最值得保留的中文社交直连接入。"
+
+  - source_id: guba_tracked_direct
+    name: "Eastmoney Guba Tracked Boards"
+    lane: signal
+    source_family: "forum:guba"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: guba_tracked_direct
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "当前最值得保留的股吧直连接入。"
+
+  - source_id: v2ex_all_feed
+    name: "V2EX All Feed"
+    lane: signal
+    source_family: "forum:v2ex"
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: v2ex_all_feed
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "共享 signal lane 的 V2EX 全部话题 feed，作为公开论坛讨论补充信号。"
+
+  - source_id: reddit_market_forums
+    name: "Reddit Market Forums"
+    lane: signal
+    source_family: "forum:reddit"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: global
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: reddit_market_forums
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "共享 signal lane 的 Reddit 原生市场论坛线索，当前覆盖 wallstreetbets / stocks / investing。"
+
+  - source_id: reddit_tracked_search
+    name: "Reddit Tracked Search"
+    lane: signal
+    source_family: "forum:reddit"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: reddit_tracked_search
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "共享 signal lane 的 Reddit 定向搜索线索，承接研究对象级讨论补抓。"
+
+  - source_id: reddit_rumor_bing
+    name: "Bing Reddit Rumor Feed"
+    lane: signal
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: reddit_rumor_bing
+    phase1_disposition: defer
+    enabled: false
+    description: "当前为搜索发现形态，不是 Reddit 原生接入。"
+
+  - source_id: weibo_rumor_bing
+    name: "Bing Weibo Rumor Discovery Feed"
+    lane: signal
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: mixed
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: weibo_rumor_bing
+    phase1_disposition: defer
+    enabled: false
+    description: "发现层可保留，但不宜作为第一批主干。"
+
+  - source_id: xueqiu_rumor_bing
+    name: "Bing Xueqiu Rumor Discovery Feed"
+    lane: signal
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: xueqiu_rumor_bing
+    phase1_disposition: defer
+    enabled: false
+    description: "当前为搜索发现形态。"
+
+  - source_id: guba_rumor_bing
+    name: "Bing Guba Rumor Discovery Feed"
+    lane: signal
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: guba_rumor_bing
+    phase1_disposition: defer
+    enabled: false
+    description: "当前为搜索发现形态。"
+
+  - source_id: company_rumor_bing
+    name: "Bing Company Rumor Feed"
+    lane: signal
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_rumor_bing
+    phase1_disposition: defer
+    enabled: false
+    description: "公司传闻发现层，已纳入共享 source map，但当前不作为活跃 collector 主干。"
+
+  - source_id: company_rumor_china_bing
+    name: "Bing China Company Rumor Feed"
+    lane: signal
+    source_type: rss
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: daily_report
+    scheduler_class: daily
+    origin_system: investment_report
+    legacy_key: company_rumor_china_bing
+    phase1_disposition: defer
+    enabled: false
+    description: "A/H 公司传闻发现层，已纳入共享 source map，但当前不作为活跃 collector 主干。"
+
+  - source_id: serpstack_company_discovery_optional
+    name: "Serpstack Company Discovery"
+    lane: signal
+    source_family: "search:serpstack"
+    source_type: api
+    trust_tier: 2
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: on_demand
+    origin_system: news_event_hub
+    legacy_key: serpstack_company_discovery_optional
+    phase1_disposition: compat_keep
+    enabled: false
+    description: "APILayer 生态下的结构化搜索发现后端，只用于 on-demand company discovery，不进入固定轮询 collector。"
+
+  - source_id: xueqiu_tracked_search
+    name: "Xueqiu Tracked Search"
+    lane: signal
+    source_family: "social:xueqiu"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: xueqiu_tracked_search
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "共享 signal lane 的雪球定向搜索线索，当前由 browser-backed collector 承接。"
+
+  - source_id: xiaohongshu_tracked_search
+    name: "Xiaohongshu Tracked Search"
+    lane: signal
+    source_family: "social:xiaohongshu"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: company
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: xiaohongshu_tracked_search
+    phase1_disposition: defer
+    enabled: false
+    description: "共享 signal lane 的小红书定向搜索线索，当前按暂停接入口径保留在 source map 中，不进入活跃 collector。"
+
+  - source_id: xueqiu_public_timeline
+    name: "Xueqiu Public Timeline"
+    lane: signal
+    source_family: "social:xueqiu"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: xueqiu_public_timeline
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "共享 signal lane 的雪球公共热帖线索，复用 shared auth state 做稳定采集。"
+
+  - source_id: xueqiu_hot_stocks
+    name: "Xueqiu Hot Stocks"
+    lane: signal
+    source_family: "social:xueqiu"
+    source_type: social
+    trust_tier: 3
+    coverage_scope: mixed
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: xueqiu_hot_stocks
+    phase1_disposition: migrate_phase1
+    enabled: true
+    description: "共享 signal lane 的雪球热股榜信号，用于主题发酵与关注度变化跟踪。"
+
+  - source_id: polymarket
+    name: "Polymarket"
+    lane: signal
+    source_type: api
+    trust_tier: 3
+    coverage_scope: global
+    collector_owner: shared
+    scheduler_class: daily
+    origin_system: news_event_hub
+    legacy_key: polymarket
+    phase1_disposition: defer
+    enabled: false
+    description: "重要方向，但不作为当前第一批实际写入源。"

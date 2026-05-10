@@ -1,0 +1,17 @@
+[Unit]
+Description=Unified News Event Hub Agent Reach Watch
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/news-event-hub
+Environment=AGENT_REACH_HOME=/opt/news-event-hub/runtime/agent_reach
+TimeoutStartSec=20min
+ExecStart=/opt/news-event-hub/scripts/run_agent_reach_watch.sh
+StandardOutput=append:/opt/news-event-hub/logs/agent_reach_watch.log
+StandardError=append:/opt/news-event-hub/logs/agent_reach_watch.log
+
+[Install]
+WantedBy=multi-user.target

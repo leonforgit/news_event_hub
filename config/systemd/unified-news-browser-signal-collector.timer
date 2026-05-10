@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Unified News Event Hub browser signal collector every 3 hours
+
+[Timer]
+OnBootSec=8min
+OnUnitActiveSec=3h
+Persistent=true
+RandomizedDelaySec=90
+Unit=unified-news-browser-signal-collector.service
+
+[Install]
+WantedBy=timers.target

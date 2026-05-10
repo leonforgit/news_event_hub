@@ -1,0 +1,17 @@
+[Unit]
+Description=Unified News Event Hub Browser Signal Collector
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/news-event-hub
+EnvironmentFile=-/opt/news-event-hub/config/news_event_hub.env
+TimeoutStartSec=30min
+ExecStart=/opt/news-event-hub/runtime/browser_signal/.venv/bin/python /opt/news-event-hub/scripts/run_browser_signal_collector.py --db /opt/news-event-hub/state/news_event.db --registry /opt/news-event-hub/config/source_registry_v1.yaml --catalog /opt/news-event-hub/config/browser_signal_catalog_v1.json --storage-state-path /opt/news-event-hub/state/auth/agent_reach/playwright_shared_auth.json
+StandardOutput=append:/opt/news-event-hub/logs/browser_signal_collector.log
+StandardError=append:/opt/news-event-hub/logs/browser_signal_collector.log
+
+[Install]
+WantedBy=multi-user.target

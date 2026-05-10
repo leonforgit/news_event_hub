@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Unified News Consumer View Export every 15 minutes
+
+[Timer]
+OnCalendar=*:08/15
+Persistent=true
+Unit=unified-news-consumer-views.service
+
+[Install]
+WantedBy=timers.target
+
