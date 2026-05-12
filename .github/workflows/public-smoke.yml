@@ -29,4 +29,5 @@ jobs:
           python scripts/smoke_test_event_layer.py
           python scripts/smoke_test_consumer_views.py
           python scripts/smoke_test_live_collector.py
+          python scripts/smoke_test_agent_reach_cookie_inventory.py
           python scripts/smoke_test_fred_us_macro_import.py

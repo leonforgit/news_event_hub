@@ -44,6 +44,14 @@ ssh "${NEWS_RUNTIME_HOST}" "
   git reset --hard FETCH_HEAD >/dev/null
   git remote remove codex-bundle >/dev/null 2>&1 || true
   rm -f '${REMOTE_BUNDLE_PATH}'
+  if ! id -u news-event-hub >/dev/null 2>&1; then
+    useradd --system --home-dir '${REMOTE_ROOT}' --shell /usr/sbin/nologin news-event-hub
+  fi
+  install -d -m 750 -o news-event-hub -g news-event-hub \
+    '${REMOTE_ROOT}/state' \
+    '${REMOTE_ROOT}/logs' \
+    '${REMOTE_ROOT}/cache' \
+    '${REMOTE_ROOT}/runtime'
   git status --short --branch
   git log -1 --oneline
 "

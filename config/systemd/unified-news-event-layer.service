@@ -6,12 +6,18 @@ OnSuccess=unified-news-consumer-views.service
 
 [Service]
 Type=oneshot
-User=root
+User=news-event-hub
+Group=news-event-hub
+UMask=0077
 WorkingDirectory=/opt/news-event-hub
 TimeoutStartSec=30min
 ExecStart=/usr/bin/python3 /opt/news-event-hub/scripts/build_event_layer.py --db /opt/news-event-hub/state/news_event.db --lookback-days 1 --exclude-source-id akshare_stock_notice_report --max-article-count 50000 --slice-safe
 StandardOutput=append:/opt/news-event-hub/logs/event_layer.log
 StandardError=append:/opt/news-event-hub/logs/event_layer.log
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
 
 [Install]
 WantedBy=multi-user.target

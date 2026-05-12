@@ -5,13 +5,19 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-User=root
+User=news-event-hub
+Group=news-event-hub
+UMask=0077
 WorkingDirectory=/opt/news-event-hub
 Environment=AGENT_REACH_HOME=/opt/news-event-hub/runtime/agent_reach
 TimeoutStartSec=20min
 ExecStart=/opt/news-event-hub/scripts/run_agent_reach_watch.sh
 StandardOutput=append:/opt/news-event-hub/logs/agent_reach_watch.log
 StandardError=append:/opt/news-event-hub/logs/agent_reach_watch.log
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
 
 [Install]
 WantedBy=multi-user.target

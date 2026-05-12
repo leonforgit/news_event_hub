@@ -36,7 +36,7 @@ for path in "${REQUIRED_FILES[@]}"; do
 done
 
 ssh "${NEWS_RUNTIME_HOST}" "python3 --version >/dev/null && node --version >/dev/null && npm --version >/dev/null && test -w /etc/systemd/system"
-ssh "${NEWS_RUNTIME_HOST}" "mkdir -p '${REMOTE_CONFIG_DIR}' '${REMOTE_SYSTEMD_DIR}' '${REMOTE_SCRIPT_DIR}' '${REMOTE_RUNTIME_DIR}'"
+ssh "${NEWS_RUNTIME_HOST}" "install -d -m 755 '${REMOTE_CONFIG_DIR}' '${REMOTE_SYSTEMD_DIR}' '${REMOTE_SCRIPT_DIR}'; install -d -m 750 '${REMOTE_RUNTIME_DIR}'; chown -R news-event-hub:news-event-hub '${REMOTE_RUNTIME_DIR}' '${REMOTE_ROOT}/state' '${REMOTE_ROOT}/logs' 2>/dev/null || true"
 
 scp "${ROOT_DIR}/config/browser_signal_catalog_v1.json" "${NEWS_RUNTIME_HOST}:${REMOTE_CONFIG_DIR}/browser_signal_catalog_v1.json"
 scp "${ROOT_DIR}/scripts/install_browser_signal_runtime.sh" "${NEWS_RUNTIME_HOST}:${REMOTE_SCRIPT_DIR}/install_browser_signal_runtime.sh"
@@ -47,6 +47,7 @@ scp "${ROOT_DIR}/config/systemd/unified-news-browser-signal-collector.timer" "${
 
 ssh "${NEWS_RUNTIME_HOST}" "chmod +x '${REMOTE_SCRIPT_DIR}/install_browser_signal_runtime.sh' '${REMOTE_SCRIPT_DIR}/run_browser_signal_collector.py'"
 ssh "${NEWS_RUNTIME_HOST}" "BROWSER_SIGNAL_HOME='${REMOTE_RUNTIME_DIR}' '${REMOTE_SCRIPT_DIR}/install_browser_signal_runtime.sh'"
+ssh "${NEWS_RUNTIME_HOST}" "chown -R news-event-hub:news-event-hub '${REMOTE_RUNTIME_DIR}' '${REMOTE_ROOT}/state' '${REMOTE_ROOT}/logs' 2>/dev/null || true; chmod -R go-rwx '${REMOTE_ROOT}/state' '${REMOTE_ROOT}/logs' 2>/dev/null || true"
 ssh "${NEWS_RUNTIME_HOST}" "'${REMOTE_RUNTIME_DIR}/.venv/bin/python' '${REMOTE_SCRIPT_DIR}/smoke_test_browser_signal_collector.py'"
 ssh "${NEWS_RUNTIME_HOST}" "systemd-analyze verify '${REMOTE_SYSTEMD_DIR}/unified-news-browser-signal-collector.service' '${REMOTE_SYSTEMD_DIR}/unified-news-browser-signal-collector.timer' && cp '${REMOTE_SYSTEMD_DIR}/unified-news-browser-signal-collector.service' /etc/systemd/system/unified-news-browser-signal-collector.service && cp '${REMOTE_SYSTEMD_DIR}/unified-news-browser-signal-collector.timer' /etc/systemd/system/unified-news-browser-signal-collector.timer && systemctl daemon-reload && systemctl enable --now unified-news-browser-signal-collector.timer"
 

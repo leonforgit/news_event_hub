@@ -6,7 +6,9 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 AGENT_REACH_HOME="${AGENT_REACH_HOME:-${ROOT_DIR}/runtime/agent_reach}"
 VENV_DIR="${AGENT_REACH_HOME}/.venv"
-REPO_SPEC="${AGENT_REACH_REPO_SPEC:-git+https://github.com/Panniantong/Agent-Reach.git}"
+DEFAULT_AGENT_REACH_REPO_SPEC="git+https://github.com/Panniantong/Agent-Reach.git@23d4d5c611b871a49d33a771769c0b3dc554c85b"
+REPO_SPEC="${AGENT_REACH_REPO_SPEC:-${DEFAULT_AGENT_REACH_REPO_SPEC}}"
+ALLOW_UNPINNED="${AGENT_REACH_ALLOW_UNPINNED:-0}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 
 require_cmd() {
@@ -17,6 +19,14 @@ require_cmd() {
 }
 
 require_cmd "${PYTHON_BIN}"
+
+repo_spec_is_pinned() {
+  case "$1" in
+    git+*@*) return 0 ;;
+    git+*) return 1 ;;
+    *) return 0 ;;
+  esac
+}
 
 venv_is_healthy() {
   [[ -x "${VENV_DIR}/bin/python" ]] || return 1
@@ -63,7 +73,12 @@ fi
 
 ensure_pip
 
-"${VENV_DIR}/bin/python" -m pip install --upgrade pip setuptools wheel
+if ! repo_spec_is_pinned "${REPO_SPEC}" && [[ "${ALLOW_UNPINNED}" != "1" ]]; then
+  echo "Refusing unpinned git install: ${REPO_SPEC}" >&2
+  echo "Set AGENT_REACH_REPO_SPEC to a tag/commit-pinned spec or AGENT_REACH_ALLOW_UNPINNED=1." >&2
+  exit 2
+fi
+
 "${VENV_DIR}/bin/python" -m pip install --upgrade "${REPO_SPEC}"
 install_wrapper
 configure_yt_dlp

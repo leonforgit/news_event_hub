@@ -12,9 +12,8 @@ if [[ ! -x "${VENV_DIR}/bin/python" ]]; then
   python3 -m venv "${VENV_DIR}"
 fi
 
-"${VENV_DIR}/bin/python" -m pip install --upgrade pip setuptools wheel
-"${VENV_DIR}/bin/python" -m pip install requests pyyaml beautifulsoup4
-"${VENV_DIR}/bin/python" -m pip install "playwright>=1.52,<2"
+"${VENV_DIR}/bin/python" -m pip install -r "${ROOT_DIR}/requirements.txt"
+"${VENV_DIR}/bin/python" -m pip install "playwright==1.59.0"
 "${VENV_DIR}/bin/python" -m playwright install chromium
 
 echo "browser_signal_home=${RUNTIME_HOME}"
